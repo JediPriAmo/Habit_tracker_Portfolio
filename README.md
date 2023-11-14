@@ -15,7 +15,7 @@ Habit Tracker is a simple Python application designed to help you track your dai
 
 - Create and manage daily or weekly habits
 - Track completion status and dates
-- View and analyze habit data
+- View and analyze habit data in tabular form
 - Calculate and display longest streaks
 - When entering habit names, ensure they are spelled correctly
 - Viewing by periodicities, ensure the habit has the correct periodicity otherwise solution outputs "'habit_name' not found"
