@@ -49,12 +49,8 @@ Habit Tracker is a simple Python application designed to help you track your dai
 1. In anaconda environment, open jupyter lab.
 2. Drag "Habit_tracker_script.py" & "Habittracker_Analytics_unittest.py" to the file browser in jupyter lab.
 3. Open a new notebook.
-4. Input in cell: `%run -i Habittracker_Analytics_unittest.py`
-5. Or you can copy & paste entire code from "Habittracker_Analytics_unittest.py" and run it. r.
-
-## Unit Testing
-
-The application includes a suite of unit tests to ensure the functionality of core components. To run tests:
+4. You can copy & paste entire code from "Habittracker_Analytics_unittest.py" and run it.
+5 Or you can input the following in cell:
 
 ```bash
-python -m unittest test_habit_tracker.py
+%run -i Habittracker_Analytics_unittest.py
