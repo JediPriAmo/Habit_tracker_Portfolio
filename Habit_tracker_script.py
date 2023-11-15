@@ -22,43 +22,6 @@ class Habit:
         self.target_times_or_days = target_times_or_days
         self.creation_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    @staticmethod #decorator indicating that the following method is a static method (belonging to habit class rather than an instance of it)
-    def _get_habits_by_periodicity(periodicity):
-        # the'cursor.execute(...):' allows for the execution of the following SQL query on the database
-        cursor.execute(f"SELECT h.id, h.habit_name, h.target_times_or_days, h.creation_date, c.completion_date "
-                       f"FROM habits h "
-                       f"LEFT JOIN habit_completions c ON h.id = c.habit_id "
-                       f"WHERE h.periodicity=?",
-                       (periodicity,))
-
-        habits = cursor.fetchall() # Fetches all the results from the executed query
-
-        #Constructing table
-        table_data = []
-        for habit in habits:
-            habit_id, habit_name, target_times_or_days, creation_date, completion_date = habit
-            completion_status = 'Yes' if completion_date else 'No'
-            table_data.append(
-                [habit_id, habit_name, periodicity, target_times_or_days, creation_date, completion_status,
-                 completion_date])
-
-        #creates dataframe for pandas to be displayed
-        df = pd.DataFrame(table_data,
-                          columns=["ID", "Habit Name", "Periodicity", "Target Times/Days", "Creation Date", "Completed",
-                                   "Completion Date"])
-        display(df)
-
-
-    # class methods defined within/ inheriting from the Habit class
-    @classmethod #This decorator is used to define a method that is bound to the class and not the instance of the class
-    def view_daily_habits(cls):
-        cls._get_habits_by_periodicity('daily')
-
-    @classmethod
-    def view_weekly_habits(cls):
-        cls._get_habits_by_periodicity('weekly')
-
-
 class HabitDatabase:
     # The database contains the following tables if they dont exist in the database: habits, habit_completions & habit_streaks
     # NOTE: tables are already completed in the database "2new_habit_tracker"
@@ -150,12 +113,12 @@ class Analytics:
     # The '@staticmethod' decorator in Python is used to define the following static methods (without it the solution wouldnt run properly)
     # Each method executes a SQL query to retrieve all habits and their completion status from the database
     # All the methods (except 'view longest streak for habit') use pandas where after creating the DataFrame, they display it using the display function from the IPython library
-    @staticmethod
+    @staticmethod #decorator indicating that the following method is a static method (belonging to habit class rather than an instance of it)
     def view_all_habits():
         cursor.execute("SELECT h.id, h.habit_name, h.periodicity, h.target_times_or_days, h.creation_date, c.completion_date "
                        "FROM habits h "
                        "LEFT JOIN habit_completions c ON h.id = c.habit_id")
-        all_habits = cursor.fetchall()
+        all_habits = cursor.fetchall() # Fetches all the results from the executed query
 
         table_data = []
         for habit in all_habits:
@@ -210,6 +173,41 @@ class Analytics:
         else:
             print(f"Habit '{habit_name}' not found.")
 
+    @staticmethod 
+    def _get_habits_by_periodicity(periodicity):
+         # the'cursor.execute(...):' allows for the execution of the following SQL query on the database
+        cursor.execute(f"SELECT h.id, h.habit_name, h.target_times_or_days, h.creation_date, c.completion_date "
+                       f"FROM habits h "
+                       f"LEFT JOIN habit_completions c ON h.id = c.habit_id "
+                       f"WHERE h.periodicity=?",
+                       (periodicity,))
+
+        habits = cursor.fetchall()
+
+        # Constructing table
+        table_data = []
+        for habit in habits:
+            habit_id, habit_name, target_times_or_days, creation_date, completion_date = habit
+            completion_status = 'Yes' if completion_date else 'No'
+            table_data.append(
+                [habit_id, habit_name, periodicity, target_times_or_days, creation_date, completion_status,
+                 completion_date])
+
+        #creates dataframe for pandas to be displayed
+        df = pd.DataFrame(table_data,
+                          columns=["ID", "Habit Name", "Periodicity", "Target Times/Days", "Creation Date", "Completed",
+                                   "Completion Date"])
+        display(df)
+
+    #class methods defined within/utilizing the _get_habits_by_periodicity method
+    @classmethod #This decorator is used to define a method that is bound to the class and not the instance of the class
+    def view_daily_habits(cls):
+        cls._get_habits_by_periodicity('daily')
+
+    @classmethod
+    def view_weekly_habits(cls):
+        cls._get_habits_by_periodicity('weekly')   
+            
 # Main menu loop with the following options
 while True:
     print("Options:")
@@ -252,9 +250,9 @@ while True:
     elif choice == '4':
         analytics.view_all_habits()
     elif choice == '5':
-        Habit.view_daily_habits()
+        analytics.view_daily_habits()
     elif choice == '6':
-        Habit.view_weekly_habits()
+        analytics.view_weekly_habits()
     elif choice == '7':
         analytics.view_longest_streaks()
     elif choice == '8':
@@ -273,7 +271,6 @@ conn.close()
 
 
 # In[ ]:
-
 
 
 
